@@ -1,21 +1,33 @@
-import { useSelector } from '../../services/store';
+import { FC, useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../../services/store';
 
 import styles from './constructor-page.module.css';
-
 import { BurgerIngredients } from '../../components';
 import { BurgerConstructor } from '../../components';
 import { Preloader } from '../../components/ui';
-import { FC } from 'react';
+import { fetchIngredients } from '../../services/slices/ingredients-slice';
+
+// Селектор: статус загрузки ингредиентов
+const isIngredientsLoadingSelector = (state: {
+  ingredients: { isLoading: boolean };
+}) => state.ingredients.isLoading;
 
 export const ConstructorPage: FC = () => {
-  /** TODO: взять переменную из стора */
-  const isIngredientsLoading = false;
+  const dispatch = useAppDispatch();
+  const isIngredientsLoading = useAppSelector(isIngredientsLoadingSelector);
+
+  // Загружаем ингредиенты при монтировании страницы
+  useEffect(() => {
+    dispatch(fetchIngredients());
+  }, [dispatch]);
 
   return (
     <>
       {isIngredientsLoading ? (
+        // Лоадер во время загрузки
         <Preloader />
       ) : (
+        // Основной контент страницы
         <main className={styles.containerMain}>
           <h1
             className={`${styles.title} text text_type_main-large mt-10 mb-5 pl-5`}
@@ -23,7 +35,9 @@ export const ConstructorPage: FC = () => {
             Соберите бургер
           </h1>
           <div className={`${styles.main} pl-5 pr-5`}>
+            {/* Список ингредиентов */}
             <BurgerIngredients />
+            {/* Конструктор бургера */}
             <BurgerConstructor />
           </div>
         </main>
