@@ -1,15 +1,18 @@
-import { expect, test, describe, jest } from '@jest/globals';
+import { expect, test, describe, jest, beforeEach } from '@jest/globals';
 import * as Utils from '../../utils/cookie';
 
 describe('Тесты утилит Cookie', () => {
-  test('setCookie устанавливает cookie', () => {
+  beforeEach(() => {
     global.document = { cookie: '' } as any;
+    jest.restoreAllMocks();
+  });
+
+  test('setCookie устанавливает cookie', () => {
     const spy = jest.spyOn(Utils, 'setCookie');
 
     Utils.setCookie('test_name', 'test_val');
 
     expect(spy).toHaveBeenCalledWith('test_name', 'test_val');
-
     expect(document.cookie).toMatch(/test_name=test_val/);
   });
 
@@ -34,13 +37,11 @@ describe('Тесты утилит Cookie', () => {
   });
 
   test('deleteCookie устанавливает cookie с истёкшей датой', () => {
-    global.document = { cookie: '' } as any;
     const spy = jest.spyOn(Utils, 'deleteCookie');
 
     Utils.deleteCookie('test_name');
 
     expect(spy).toHaveBeenCalledWith('test_name');
-
     expect(document.cookie).toMatch(/test_name=/);
   });
 });

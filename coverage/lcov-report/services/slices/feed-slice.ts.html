@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80.58% </span>
+                <span class="strong">78.72% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>83/103</span>
+                <span class='fraction'>74/94</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80.58% </span>
+                <span class="strong">78.72% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>83/103</span>
+                <span class='fraction'>74/94</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -157,19 +157,7 @@
 <a name='L92'></a><a href='#L92'>92</a>
 <a name='L93'></a><a href='#L93'>93</a>
 <a name='L94'></a><a href='#L94'>94</a>
-<a name='L95'></a><a href='#L95'>95</a>
-<a name='L96'></a><a href='#L96'>96</a>
-<a name='L97'></a><a href='#L97'>97</a>
-<a name='L98'></a><a href='#L98'>98</a>
-<a name='L99'></a><a href='#L99'>99</a>
-<a name='L100'></a><a href='#L100'>100</a>
-<a name='L101'></a><a href='#L101'>101</a>
-<a name='L102'></a><a href='#L102'>102</a>
-<a name='L103'></a><a href='#L103'>103</a>
-<a name='L104'></a><a href='#L104'>104</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<a name='L95'></a><a href='#L95'>95</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -194,7 +182,6 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -239,8 +226,6 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -251,9 +236,6 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -273,7 +255,6 @@
 import { getFeedsApi, getOrderByNumberApi } from '../../utils/burger-api';
 import { TOrder } from '../../utils/types';
 &nbsp;
-// ✅ Тип состояния фида
 export interface TFeedState {
   data: {
     orders: TOrder[];
@@ -285,7 +266,6 @@ export interface TFeedState {
   error: string | null;
 }
 &nbsp;
-// ✅ Начальное состояние
 const initialState: TFeedState = {
   data: null,
   order: null,
@@ -293,13 +273,11 @@ const initialState: TFeedState = {
   error: null
 };
 &nbsp;
-// ✅ Thunk: получить все заказы (лента)
 export const fetchFeeds = createAsyncThunk('feed/fetchFeeds', async () =&gt; {
 <span class="cstat-no" title="statement not covered" >  const data = await getFeedsApi();</span>
 <span class="cstat-no" title="statement not covered" >  return data;</span>
 });
 &nbsp;
-// ✅ Thunk: получить заказ по номеру
 export const getOrderByNumberThunk = createAsyncThunk(
   'feed/getOrderByNumber',
   async (number: number, { rejectWithValue }) =&gt; {
@@ -316,12 +294,10 @@ export const getOrderByNumberThunk = createAsyncThunk(
 <span class="cstat-no" title="statement not covered" >  }</span>
 );
 &nbsp;
-// ✅ Слайс
 const feedSlice = createSlice({
   name: 'feed',
   initialState,
   reducers: {
-    // ✅ Очистить текущий заказ
     clearCurrentOrder: (state) =&gt; {
       state.order = null;
     }
@@ -358,13 +334,10 @@ const feedSlice = createSlice({
   }
 });
 &nbsp;
-// ✅ Экспорт named actions
 export const { clearCurrentOrder } = feedSlice.actions;
 &nbsp;
-// ✅ Экспорт редюсера по default
 export default feedSlice.reducer;
 &nbsp;
-// ✅ Селекторы
 export const orderSelector = <span class="fstat-no" title="function not covered" >(state: { feed: TFeedState }) =&gt; state.</span>feed.order;
 export const feedsDataSelector = <span class="fstat-no" title="function not covered" >(state: { feed: TFeedState }) =&gt;</span>
 <span class="cstat-no" title="statement not covered" >  state.feed.data;</span>
@@ -379,7 +352,7 @@ export const feedsErrorSelector = <span class="fstat-no" title="function not cov
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-09-30T12:58:06.704Z
+                at 2025-09-30T14:30:53.566Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

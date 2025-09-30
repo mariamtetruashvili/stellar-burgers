@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">93.57% </span>
+                <span class="strong">93.06% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>102/109</span>
+                <span class='fraction'>94/101</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">93.57% </span>
+                <span class="strong">93.06% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>102/109</span>
+                <span class='fraction'>94/101</span>
             </div>
         
             
@@ -164,18 +164,7 @@
 <a name='L99'></a><a href='#L99'>99</a>
 <a name='L100'></a><a href='#L100'>100</a>
 <a name='L101'></a><a href='#L101'>101</a>
-<a name='L102'></a><a href='#L102'>102</a>
-<a name='L103'></a><a href='#L103'>103</a>
-<a name='L104'></a><a href='#L104'>104</a>
-<a name='L105'></a><a href='#L105'>105</a>
-<a name='L106'></a><a href='#L106'>106</a>
-<a name='L107'></a><a href='#L107'>107</a>
-<a name='L108'></a><a href='#L108'>108</a>
-<a name='L109'></a><a href='#L109'>109</a>
-<a name='L110'></a><a href='#L110'>110</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<a name='L102'></a><a href='#L102'>102</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -208,8 +197,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -219,9 +206,6 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -285,28 +269,25 @@
 import { getIngredientsApi } from '../../utils/burger-api';
 import { TIngredient } from '../../utils/types';
 &nbsp;
-// ✅ Тип состояния ингредиентов
 type TIngredientsState = {
-  orderRequest: any; // Текущий заказ
-  constructorItems: any; // Состав конструктора (булка + начинки)
-  ingredients: TIngredient[]; // Список всех ингредиентов
-  isLoading: boolean; // Статус загрузки
-  error: string | null; // Ошибка
+  orderRequest: any;
+  constructorItems: any;
+  ingredients: TIngredient[];
+  isLoading: boolean;
+  error: string | null;
 };
 &nbsp;
-// ✅ Начальное состояние
 const initialState: TIngredientsState = {
   ingredients: [],
   constructorItems: {
-    bun: null, // Булка
-    ingredients: [] // Начинки
+    bun: null,
+    ingredients: []
   },
   isLoading: false,
   error: null,
   orderRequest: undefined
 };
 &nbsp;
-// ✅ Thunk: загрузка ингредиентов с сервера
 export const fetchIngredients = createAsyncThunk(
   'ingredients/fetchIngredients',
   async (_, { rejectWithValue }) =&gt; {
@@ -319,12 +300,10 @@ export const fetchIngredients = createAsyncThunk(
 <span class="cstat-no" title="statement not covered" >  }</span>
 );
 &nbsp;
-// ✅ Слайс ингредиентов
 export const ingredientsSlice = createSlice({
   name: 'ingredients',
   initialState,
   reducers: {
-    // ✅ Добавить ингредиент в конструктор
     addIngredient: (state, action: PayloadAction&lt;TIngredient&gt;) =&gt; {
       const ingredient = action.payload;
       if (ingredient.type === 'bun') {
@@ -333,45 +312,44 @@ export const ingredientsSlice = createSlice({
         state.constructorItems.ingredients.push(ingredient);
       }
     },
-    // ✅ Удалить ингредиент из конструктора
+&nbsp;
     removeIngredient: (state, action: PayloadAction&lt;TIngredient&gt;) =&gt; {
       state.constructorItems.ingredients =
         state.constructorItems.ingredients.filter(
           (item: { _id: string }) =&gt; item._id !== action.payload._id
         );
     },
-    // ✅ Переместить ингредиент вверх
+&nbsp;
     moveIngredientUp: (state, action: PayloadAction&lt;number&gt;) =&gt; {
       const index = action.payload;
       if (index &lt;= 0) <span class="branch-0 cbranch-no" title="branch not covered" >return;</span>
       const arr = state.constructorItems.ingredients;
       [arr[index], arr[index - 1]] = [arr[index - 1], arr[index]];
     },
-    // ✅ Переместить ингредиент вниз
+&nbsp;
     moveIngredientDown: (state, action: PayloadAction&lt;number&gt;) =&gt; {
       const index = action.payload;
       const arr = state.constructorItems.ingredients;
       if (index &gt;= arr.length - 1) <span class="branch-0 cbranch-no" title="branch not covered" >return;</span>
       [arr[index], arr[index + 1]] = [arr[index + 1], arr[index]];
     },
-    // ✅ Очистить конструктор
+&nbsp;
     clearConstructor: (state) =&gt; {
       state.constructorItems.bun = null;
       state.constructorItems.ingredients = [];
     }
   },
   extraReducers: (builder) =&gt; {
-    // ✅ fetchIngredients pending
     builder.addCase(fetchIngredients.pending, (state) =&gt; {
       state.isLoading = true;
       state.error = null;
     });
-    // ✅ fetchIngredients fulfilled
+&nbsp;
     builder.addCase(fetchIngredients.fulfilled, (state, action) =&gt; {
       state.isLoading = false;
       state.ingredients = action.payload;
     });
-    // ✅ fetchIngredients rejected
+&nbsp;
     builder.addCase(fetchIngredients.rejected, (state, action) =&gt; {
       state.isLoading = false;
       state.error = action.payload as string;
@@ -379,10 +357,8 @@ export const ingredientsSlice = createSlice({
   }
 });
 &nbsp;
-// ✅ Экспорт редюсера
 export default ingredientsSlice.reducer;
 &nbsp;
-// ✅ Экспорт действий
 export const {
   addIngredient,
   removeIngredient,
@@ -397,7 +373,7 @@ export const {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-09-30T12:58:06.704Z
+                at 2025-09-30T14:30:53.566Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -3,6 +3,14 @@ import * as authTokens from '../fixtures/token.json';
 
 const API_URL = 'https://norma.nomoreparties.space/api';
 
+// Константы для повторяющихся селекторов
+const SELECTORS = {
+  modal: '[data-cy=modal]',
+  closeModalBtn: '[data-cy=close_modal_btn]',
+  modalOverlay: '[data-cy=modal_overlay]',
+  constructorElements: '[data-cy=constructor-elements]',
+};
+
 describe('E2E тестирование страницы конструктора бургеров', () => {
   beforeEach(() => {
     cy.intercept('GET', `${API_URL}/ingredients`, {
@@ -35,20 +43,11 @@ describe('E2E тестирование страницы конструктора
         });
 
       cy.contains('Флюоресцентная булка R2-D3 (верх)').should('be.visible');
-      cy.get('[data-cy=constructor-elements]').within(() => {
+      cy.get(SELECTORS.constructorElements).within(() => {
         cy.contains('Биокотлета из марсианской Магнолии').should('be.visible');
         cy.contains('Соус Spicy-X').should('be.visible');
       });
       cy.contains('Флюоресцентная булка R2-D3 (низ)').should('be.visible');
-    });
-
-    it('Проверка модального окна заказа', () => {
-      cy.contains('Оформить заказ').click({ force: true });
-
-      cy.intercept('POST', `${API_URL}/orders`, {
-        statusCode: 200,
-        body: { success: true, order: { number: 39638 } }
-      }).as('postOrder');
     });
   });
 
@@ -61,13 +60,13 @@ describe('E2E тестирование страницы конструктора
 
     it('Закрытие модалки крестиком', () => {
       cy.contains('Краторная булка N-200i').click();
-      cy.get('[data-cy=close_modal_btn]').click();
+      cy.get(SELECTORS.closeModalBtn).click();
       cy.contains('Детали ингредиента').should('not.exist');
     });
 
     it('Закрытие модалки кликом по оверлею', () => {
       cy.contains('Краторная булка N-200i').click();
-      cy.get('[data-cy=modal_overlay]').click({ force: true });
+      cy.get(SELECTORS.modalOverlay).click({ force: true });
       cy.contains('Детали ингредиента').should('not.exist');
     });
 
@@ -83,12 +82,8 @@ describe('E2E тестирование страницы конструктора
       cy.intercept(`${API_URL}/ingredients`, {
         fixture: 'ingredients.json'
       }).as('getIngredients');
-      cy.intercept(`${API_URL}/auth/user`, { fixture: 'user.json' }).as(
-        'getUser'
-      );
-      cy.intercept(`${API_URL}/orders`, { fixture: 'order.json' }).as(
-        'createOrder'
-      );
+      cy.intercept(`${API_URL}/auth/user`, { fixture: 'user.json' }).as('getUser');
+      cy.intercept(`${API_URL}/orders`, { fixture: 'order.json' }).as('createOrder');
 
       cy.setCookie(
         'accessToken',
@@ -119,25 +114,22 @@ describe('E2E тестирование страницы конструктора
         .within(() => cy.contains('Добавить').click());
 
       cy.contains('Оформить заказ').should('not.be.disabled');
-
       cy.contains('Оформить заказ').click({ force: true });
 
       cy.wait('@createOrder');
 
-      cy.get('[data-cy=modal]', { timeout: 10000 }).should('be.visible');
-      cy.get('[data-cy=modal]')
+      cy.get(SELECTORS.modal, { timeout: 10000 }).should('be.visible');
+      cy.get(SELECTORS.modal)
         .find('h2')
         .contains(orderData.order.number.toString());
 
-      cy.get('[data-cy=close_modal_btn]').click();
-
+      cy.get(SELECTORS.closeModalBtn).click();
       cy.url().should('eq', 'http://localhost:4000/');
     });
 
     it('Проверка ошибки создания заказа без ингредиентов', () => {
       cy.contains('Оформить заказ').should('be.disabled');
-
-      cy.get('[data-cy=modal]').should('not.exist');
+      cy.get(SELECTORS.modal).should('not.exist');
     });
   });
 });

@@ -28,60 +28,58 @@ describe('orderSlice тесты', () => {
     updatedAt: ''
   };
 
+  const testPending = (actionType: string) => {
+    const state = reducer(initialState, { type: actionType });
+    expect(state.loading).toBe(true);
+    expect(state.error).toBeNull();
+  };
+
+  const testRejected = (actionType: string, errorMsg: string) => {
+    const state = reducer(initialState, {
+      type: actionType,
+      payload: errorMsg
+    });
+    expect(state.loading).toBe(false);
+    expect(state.error).toBe(errorMsg);
+  };
+
   it('должен возвращать начальное состояние', () => {
     expect(reducer(undefined, { type: '@@INIT' })).toEqual(initialState);
   });
 
   // createOrder
   it('обрабатывает createOrder.pending', () => {
-    const action = { type: createOrder.pending.type };
-    const state = reducer(initialState, action);
-    expect(state.loading).toBe(true);
-    expect(state.error).toBeNull();
+    testPending(createOrder.pending.type);
   });
 
   it('обрабатывает createOrder.fulfilled', () => {
-    const action = { type: createOrder.fulfilled.type, payload: order1 };
-    const state = reducer(initialState, action);
+    const state = reducer(initialState, {
+      type: createOrder.fulfilled.type,
+      payload: order1
+    });
     expect(state.loading).toBe(false);
     expect(state.currentOrder).toEqual(order1);
   });
 
   it('обрабатывает createOrder.rejected', () => {
-    const action = {
-      type: createOrder.rejected.type,
-      payload: 'Ошибка создания заказа'
-    };
-    const state = reducer(initialState, action);
-    expect(state.loading).toBe(false);
-    expect(state.error).toBe('Ошибка создания заказа');
+    testRejected(createOrder.rejected.type, 'Ошибка создания заказа');
   });
 
   // fetchOrders
   it('обрабатывает fetchOrders.pending', () => {
-    const action = { type: fetchOrders.pending.type };
-    const state = reducer(initialState, action);
-    expect(state.loading).toBe(true);
-    expect(state.error).toBeNull();
+    testPending(fetchOrders.pending.type);
   });
 
   it('обрабатывает fetchOrders.fulfilled', () => {
-    const action = {
+    const state = reducer(initialState, {
       type: fetchOrders.fulfilled.type,
       payload: [order1, order2]
-    };
-    const state = reducer(initialState, action);
+    });
     expect(state.loading).toBe(false);
     expect(state.orders).toEqual([order1, order2]);
   });
 
   it('обрабатывает fetchOrders.rejected', () => {
-    const action = {
-      type: fetchOrders.rejected.type,
-      payload: 'Ошибка загрузки истории заказов'
-    };
-    const state = reducer(initialState, action);
-    expect(state.loading).toBe(false);
-    expect(state.error).toBe('Ошибка загрузки истории заказов');
+    testRejected(fetchOrders.rejected.type, 'Ошибка загрузки истории заказов');
   });
 });

@@ -15,27 +15,38 @@ afterAll(() => {
   global.fetch = originalFetch;
 });
 
+// ===================
+// Константы и хелперы
+// ===================
+const mockData = {
+  success: true,
+  data: 'test data',
+  orders: ['test1', 'test2'],
+  user: { email: 'test@mail.com', name: 'Test User' },
+  order: { number: 123 }
+};
+
+const mockError = {
+  success: false,
+  name: 'error',
+  message: 'jwt expired'
+};
+
+const setFetchSuccess = () =>
+  (global.fetch = jest.fn(() => getMockResponse(mockData)) as any);
+
+const setFetchError = () =>
+  (global.fetch = jest.fn(() => getMockResponse(mockError)) as any);
+
+const expectError = (err: any) => expect(err).toEqual(mockError);
+
 describe('Тесты Burger API', () => {
   // Мокируем document и localStorage
   global.document = { cookie: 'accessToken=test_val' } as any;
   global.localStorage = { getItem: () => 'testItem', setItem: () => {} } as any;
 
-  const mockData = {
-    success: true,
-    data: 'test data',
-    orders: ['test1', 'test2'],
-    user: { email: 'test@mail.com', name: 'Test User' },
-    order: { number: 123 }
-  };
-
-  const mockError = {
-    success: false,
-    name: 'error',
-    message: 'jwt expired'
-  };
-
   test('getUserApi успешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockData)) as any;
+    setFetchSuccess();
     const spy = jest.spyOn(API, 'getUserApi');
     const res = await API.getUserApi();
 
@@ -44,7 +55,7 @@ describe('Тесты Burger API', () => {
   });
 
   test('logoutApi успешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockData)) as any;
+    setFetchSuccess();
     const spy = jest.spyOn(API, 'logoutApi');
     const res = await API.logoutApi();
 
@@ -53,7 +64,7 @@ describe('Тесты Burger API', () => {
   });
 
   test('updateUserApi успешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockData)) as any;
+    setFetchSuccess();
     const mockUserData = { name: 'Test', email: 'test@mail.com' };
     const spy = jest.spyOn(API, 'updateUserApi');
     const res = await API.updateUserApi(mockUserData);
@@ -63,7 +74,7 @@ describe('Тесты Burger API', () => {
   });
 
   test('resetPasswordApi успешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockData)) as any;
+    setFetchSuccess();
     const mockUserData = { password: 'test', token: 'testtoken' };
     const spy = jest.spyOn(API, 'resetPasswordApi');
     const res = await API.resetPasswordApi(mockUserData);
@@ -73,15 +84,13 @@ describe('Тесты Burger API', () => {
   });
 
   test('resetPasswordApi неуспешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockError)) as any;
+    setFetchError();
     const mockUserData = { password: 'test', token: 'testtoken' };
-    await API.resetPasswordApi(mockUserData).catch((err: any) =>
-      expect(err).toEqual(mockError)
-    );
+    await API.resetPasswordApi(mockUserData).catch(expectError);
   });
 
   test('forgotPasswordApi успешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockData)) as any;
+    setFetchSuccess();
     const mockUserData = { email: 'test@mail.com' };
     const spy = jest.spyOn(API, 'forgotPasswordApi');
     const res = await API.forgotPasswordApi(mockUserData);
@@ -91,14 +100,12 @@ describe('Тесты Burger API', () => {
   });
 
   test('forgotPasswordApi неуспешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockError)) as any;
-    await API.forgotPasswordApi({ email: 'test@mail.com' }).catch((err: any) =>
-      expect(err).toEqual(mockError)
-    );
+    setFetchError();
+    await API.forgotPasswordApi({ email: 'test@mail.com' }).catch(expectError);
   });
 
   test('loginUserApi успешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockData)) as any;
+    setFetchSuccess();
     const mockUserData = { email: 'test@mail.com', password: 'test' };
     const spy = jest.spyOn(API, 'loginUserApi');
     const res = await API.loginUserApi(mockUserData);
@@ -108,15 +115,13 @@ describe('Тесты Burger API', () => {
   });
 
   test('loginUserApi неуспешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockError)) as any;
+    setFetchError();
     const mockUserData = { email: 'test@mail.com', password: 'test' };
-    await API.loginUserApi(mockUserData).catch((err: any) =>
-      expect(err).toEqual(mockError)
-    );
+    await API.loginUserApi(mockUserData).catch(expectError);
   });
 
   test('registerUserApi успешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockData)) as any;
+    setFetchSuccess();
     const mockUserData = {
       name: 'Test',
       email: 'test@mail.com',
@@ -130,19 +135,17 @@ describe('Тесты Burger API', () => {
   });
 
   test('registerUserApi неуспешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockError)) as any;
+    setFetchError();
     const mockUserData = {
       name: 'Test',
       email: 'test@mail.com',
       password: '123'
     };
-    await API.registerUserApi(mockUserData).catch((err: any) =>
-      expect(err).toEqual(mockError)
-    );
+    await API.registerUserApi(mockUserData).catch(expectError);
   });
 
   test('getOrderByNumberApi успешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockData)) as any;
+    setFetchSuccess();
     const spy = jest.spyOn(API, 'getOrderByNumberApi');
     const res = await API.getOrderByNumberApi(123);
 
@@ -151,7 +154,7 @@ describe('Тесты Burger API', () => {
   });
 
   test('orderBurgerApi успешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockData)) as any;
+    setFetchSuccess();
     const burger = ['id1', 'id2', 'id3'];
     const spy = jest.spyOn(API, 'orderBurgerApi');
     const res = await API.orderBurgerApi(burger);
@@ -161,15 +164,13 @@ describe('Тесты Burger API', () => {
   });
 
   test('orderBurgerApi неуспешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockError)) as any;
+    setFetchError();
     const burger = ['id1', 'id2', 'id3'];
-    await API.orderBurgerApi(burger).catch((err: any) =>
-      expect(err).toEqual(mockError)
-    );
+    await API.orderBurgerApi(burger).catch(expectError);
   });
 
   test('getOrdersApi успешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockData)) as any;
+    setFetchSuccess();
     const spy = jest.spyOn(API, 'getOrdersApi');
     const res = await API.getOrdersApi();
 
@@ -178,14 +179,12 @@ describe('Тесты Burger API', () => {
   });
 
   test('getOrdersApi неуспешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockError)) as any;
-    await API.getOrdersApi().catch((err: any) =>
-      expect(err).toEqual(mockError)
-    );
+    setFetchError();
+    await API.getOrdersApi().catch(expectError);
   });
 
   test('getFeedsApi успешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockData)) as any;
+    setFetchSuccess();
     const spy = jest.spyOn(API, 'getFeedsApi');
     const res = await API.getFeedsApi();
 
@@ -194,12 +193,12 @@ describe('Тесты Burger API', () => {
   });
 
   test('getFeedsApi неуспешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockError)) as any;
-    await API.getFeedsApi().catch((err: any) => expect(err).toEqual(mockError));
+    setFetchError();
+    await API.getFeedsApi().catch(expectError);
   });
 
   test('getIngredientsApi успешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockData)) as any;
+    setFetchSuccess();
     const spy = jest.spyOn(API, 'getIngredientsApi');
     const res = await API.getIngredientsApi();
 
@@ -208,14 +207,12 @@ describe('Тесты Burger API', () => {
   });
 
   test('getIngredientsApi неуспешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockError)) as any;
-    await API.getIngredientsApi().catch((err: any) =>
-      expect(err).toEqual(mockError)
-    );
+    setFetchError();
+    await API.getIngredientsApi().catch(expectError);
   });
 
   test('refreshToken успешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockData)) as any;
+    setFetchSuccess();
     const spy = jest.spyOn(API, 'refreshToken');
     const res = await API.refreshToken();
 
@@ -224,16 +221,12 @@ describe('Тесты Burger API', () => {
   });
 
   test('refreshToken неуспешный запрос', async () => {
-    global.fetch = jest.fn(() => getMockResponse(mockError)) as any;
-    await API.refreshToken().catch((err: any) =>
-      expect(err).toEqual(mockError)
-    );
+    setFetchError();
+    await API.refreshToken().catch(expectError);
   });
 
   test('refreshToken неуспешный запрос с ok=false', async () => {
     global.fetch = jest.fn(() => getMockResponse(mockError, false)) as any;
-    await API.refreshToken().catch((err: any) =>
-      expect(err).toEqual(mockError)
-    );
+    await API.refreshToken().catch(expectError);
   });
 });
