@@ -2,19 +2,17 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getFeedsApi, getOrderByNumberApi } from '../../utils/burger-api';
 import { TOrder } from '../../utils/types';
 
-// ✅ Тип состояния фида
-type TFeedState = {
+export interface TFeedState {
   data: {
-    orders: TOrder[]; // Список заказов
-    total: number; // Всего заказов
-    totalToday: number; // Всего сегодня
+    orders: TOrder[];
+    total: number;
+    totalToday: number;
   } | null;
-  order: TOrder | null; // Текущий заказ
-  loading: boolean; // Загрузка
-  error: string | null; // Ошибка
-};
+  order: TOrder | null;
+  loading: boolean;
+  error: string | null;
+}
 
-// ✅ Начальное состояние
 const initialState: TFeedState = {
   data: null,
   order: null,
@@ -22,20 +20,18 @@ const initialState: TFeedState = {
   error: null
 };
 
-// ✅ Thunk: получить все заказы (лента)
 export const fetchFeeds = createAsyncThunk('feed/fetchFeeds', async () => {
-  const data = await getFeedsApi(); // публичный эндпоинт
+  const data = await getFeedsApi();
   return data;
 });
 
-// ✅ Thunk: получить заказ по номеру
 export const getOrderByNumberThunk = createAsyncThunk(
   'feed/getOrderByNumber',
   async (number: number, { rejectWithValue }) => {
     try {
       const data = await getOrderByNumberApi(number);
       if (data.success && data.orders.length > 0) {
-        return data.orders[0]; // ✅ первый заказ
+        return data.orders[0];
       } else {
         return rejectWithValue('Заказ не найден');
       }
@@ -45,19 +41,17 @@ export const getOrderByNumberThunk = createAsyncThunk(
   }
 );
 
-// ✅ Слайс
 const feedSlice = createSlice({
   name: 'feed',
   initialState,
   reducers: {
-    // ✅ Очистить текущий заказ
     clearCurrentOrder: (state) => {
       state.order = null;
     }
   },
   extraReducers: (builder) => {
-    // ✅ fetchFeeds
     builder
+      // fetchFeeds
       .addCase(fetchFeeds.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -69,10 +63,9 @@ const feedSlice = createSlice({
       .addCase(fetchFeeds.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-      });
+      })
 
-    // ✅ getOrderByNumberThunk
-    builder
+      // getOrderByNumberThunk
       .addCase(getOrderByNumberThunk.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -88,10 +81,10 @@ const feedSlice = createSlice({
   }
 });
 
-// ✅ Экспорт редюсера
+export const { clearCurrentOrder } = feedSlice.actions;
+
 export default feedSlice.reducer;
 
-// ✅ Селекторы
 export const orderSelector = (state: { feed: TFeedState }) => state.feed.order;
 export const feedsDataSelector = (state: { feed: TFeedState }) =>
   state.feed.data;

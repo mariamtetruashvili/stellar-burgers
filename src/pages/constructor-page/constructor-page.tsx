@@ -7,7 +7,6 @@ import { BurgerConstructor } from '../../components';
 import { Preloader } from '../../components/ui';
 import { fetchIngredients } from '../../services/slices/ingredients-slice';
 
-// Селектор: статус загрузки ингредиентов
 const isIngredientsLoadingSelector = (state: {
   ingredients: { isLoading: boolean };
 }) => state.ingredients.isLoading;
@@ -16,7 +15,6 @@ export const ConstructorPage: FC = () => {
   const dispatch = useAppDispatch();
   const isIngredientsLoading = useAppSelector(isIngredientsLoadingSelector);
 
-  // Загружаем ингредиенты при монтировании страницы
   useEffect(() => {
     dispatch(fetchIngredients());
   }, [dispatch]);
@@ -24,10 +22,8 @@ export const ConstructorPage: FC = () => {
   return (
     <>
       {isIngredientsLoading ? (
-        // Лоадер во время загрузки
         <Preloader />
       ) : (
-        // Основной контент страницы
         <main className={styles.containerMain}>
           <h1
             className={`${styles.title} text text_type_main-large mt-10 mb-5 pl-5`}

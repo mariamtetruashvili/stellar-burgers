@@ -7,10 +7,8 @@ import { TOrder } from '@utils-types';
 export const ProfileOrders: FC = () => {
   const dispatch = useAppDispatch();
 
-  // ✅ Берём заказы из стора
   const orders: TOrder[] = useAppSelector((state) => state.order.orders);
 
-  // ✅ Загружаем заказы при входе
   useEffect(() => {
     dispatch(fetchOrders());
   }, [dispatch]);

@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { orderBurgerApi, getOrdersApi } from '../../utils/burger-api';
 import { TOrder } from '../../utils/types';
 
-// ✅ Thunk: создать новый заказ
 export const createOrder = createAsyncThunk(
   'order/create',
   async (ingredientIds: string[], { rejectWithValue }) => {
@@ -15,7 +14,6 @@ export const createOrder = createAsyncThunk(
   }
 );
 
-// ✅ Thunk: получить историю заказов
 export const fetchOrders = createAsyncThunk(
   'order/fetchOrders',
   async (_, { rejectWithValue }) => {
@@ -28,15 +26,13 @@ export const fetchOrders = createAsyncThunk(
   }
 );
 
-// ✅ Тип состояния заказа
 interface OrderState {
-  currentOrder: TOrder | null; // Текущий заказ
-  orders: TOrder[]; // История заказов
-  loading: boolean; // Статус загрузки
-  error: string | null; // Ошибка
+  currentOrder: TOrder | null;
+  orders: TOrder[];
+  loading: boolean;
+  error: string | null;
 }
 
-// ✅ Начальное состояние
 const initialState: OrderState = {
   currentOrder: null,
   orders: [],
@@ -44,7 +40,6 @@ const initialState: OrderState = {
   error: null
 };
 
-// ✅ Слайс заказов
 const orderSlice = createSlice({
   name: 'order',
   initialState,
@@ -82,5 +77,4 @@ const orderSlice = createSlice({
   }
 });
 
-// ✅ Экспорт редюсера
 export default orderSlice.reducer;
