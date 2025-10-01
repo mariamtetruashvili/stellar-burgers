@@ -5,18 +5,16 @@ import { updateUserThunk } from '../../services/slices/auth-slice';
 
 export const Profile: FC = () => {
   const dispatch = useAppDispatch();
-  // ✅ Получаем текущего пользователя и ошибку обновления
+
   const user = useAppSelector((state) => state.auth.user);
   const updateUserError = useAppSelector((state) => state.auth.error);
 
-  // ✅ Локальный стейт формы
   const [formValue, setFormValue] = useState({
     name: '',
     email: '',
     password: ''
   });
 
-  // ✅ Обновляем форму при изменении данных пользователя
   useEffect(() => {
     if (user) {
       setFormValue({
@@ -27,13 +25,11 @@ export const Profile: FC = () => {
     }
   }, [user]);
 
-  // ✅ Проверяем, изменились ли поля формы
   const isFormChanged =
     formValue.name !== user?.name ||
     formValue.email !== user?.email ||
     !!formValue.password;
 
-  // ✅ Отправка формы обновления пользователя
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
 
@@ -46,7 +42,6 @@ export const Profile: FC = () => {
     dispatch(updateUserThunk(payload));
   };
 
-  // ✅ Сброс формы к данным пользователя
   const handleCancel = (e: SyntheticEvent) => {
     e.preventDefault();
     if (user) {
@@ -58,7 +53,6 @@ export const Profile: FC = () => {
     }
   };
 
-  // ✅ Обновление локального стейта при изменении input
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormValue((prevState) => ({
       ...prevState,
@@ -66,7 +60,6 @@ export const Profile: FC = () => {
     }));
   };
 
-  // ✅ Рендер UI-компонента профиля
   return (
     <ProfileUI
       formValue={formValue}

@@ -5,15 +5,13 @@ import { registerThunk, clearError } from '../../services/slices/auth-slice';
 
 export const Register: FC = () => {
   const dispatch = useAppDispatch();
-  // ✅ Ошибка регистрации из стора
+
   const error = useAppSelector((state) => state.auth.error);
 
-  // ✅ Локальный стейт формы
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [userName, setUserName] = useState('');
 
-  // ✅ Отправка формы регистрации
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
     dispatch(
@@ -25,19 +23,17 @@ export const Register: FC = () => {
     );
   };
 
-  // ✅ Очистка ошибки при монтировании
   useEffect(() => {
     dispatch(clearError());
   }, [dispatch]);
 
-  // ✅ Рендер UI-компонента регистрации
   return (
     <RegisterUI
       errorText={error || undefined}
       email={email}
       userName={userName}
       password={password}
-      setEmail={setEmail} // ✅ Обновление стейта
+      setEmail={setEmail}
       setPassword={setPassword}
       setUserName={setUserName}
       handleSubmit={handleSubmit}

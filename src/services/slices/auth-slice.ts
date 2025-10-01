@@ -11,15 +11,13 @@ import {
 } from '../../utils/burger-api';
 import { setCookie, deleteCookie } from '../../utils/cookie';
 
-// ✅ Тип пользователя
 type User = { email: string; name: string };
 
-// ✅ Состояние auth
 interface AuthState {
-  user: User | null; // Текущий пользователь
-  loading: boolean; // Загрузка
-  error: string | null; // Ошибка
-  isAuthChecked: boolean; // Проверена ли авторизация
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+  isAuthChecked: boolean;
 }
 
 const initialState: AuthState = {
@@ -30,7 +28,7 @@ const initialState: AuthState = {
 };
 
 // --- Thunks --- //
-// ✅ Получить пользователя
+
 export const fetchUser = createAsyncThunk<User>(
   'auth/fetchUser',
   async (_, { rejectWithValue }) => {
@@ -43,7 +41,6 @@ export const fetchUser = createAsyncThunk<User>(
   }
 );
 
-// ✅ Вход
 export const loginThunk = createAsyncThunk<User, TLoginData>(
   'auth/login',
   async (payload, { rejectWithValue }) => {
@@ -58,7 +55,6 @@ export const loginThunk = createAsyncThunk<User, TLoginData>(
   }
 );
 
-// ✅ Регистрация
 export const registerThunk = createAsyncThunk<User, TRegisterData>(
   'auth/register',
   async (payload, { rejectWithValue }) => {
@@ -73,7 +69,6 @@ export const registerThunk = createAsyncThunk<User, TRegisterData>(
   }
 );
 
-// ✅ Обновление пользователя
 export const updateUserThunk = createAsyncThunk<User, Partial<TRegisterData>>(
   'auth/update',
   async (payload, { rejectWithValue }) => {
@@ -86,7 +81,6 @@ export const updateUserThunk = createAsyncThunk<User, Partial<TRegisterData>>(
   }
 );
 
-// ✅ Выход
 export const logoutThunk = createAsyncThunk<void>(
   'auth/logout',
   async (_, { rejectWithValue }) => {
@@ -106,18 +100,18 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setUser(state, action: PayloadAction<User | null>) {
-      state.user = action.payload; // ✅ Установить пользователя
+      state.user = action.payload;
     },
     setAuthChecked(state, action: PayloadAction<boolean>) {
-      state.isAuthChecked = action.payload; // ✅ Проверка авторизации
+      state.isAuthChecked = action.payload;
     },
     clearError(state) {
-      state.error = null; // ✅ Очистить ошибку
+      state.error = null;
     }
   },
   extraReducers: (builder) => {
     builder
-      // ✅ fetchUser
+
       .addCase(fetchUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -134,7 +128,6 @@ const authSlice = createSlice({
         state.isAuthChecked = true;
       })
 
-      // ✅ login
       .addCase(loginThunk.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -150,7 +143,6 @@ const authSlice = createSlice({
         state.isAuthChecked = true;
       })
 
-      // ✅ register
       .addCase(registerThunk.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -166,7 +158,6 @@ const authSlice = createSlice({
         state.isAuthChecked = true;
       })
 
-      // ✅ update
       .addCase(updateUserThunk.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -180,7 +171,6 @@ const authSlice = createSlice({
         state.error = action.payload as string;
       })
 
-      // ✅ logout
       .addCase(logoutThunk.fulfilled, (state) => {
         state.user = null;
         state.isAuthChecked = true;
